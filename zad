@@ -1,0 +1,55 @@
+package hr.fer.oop.proba;
+
+public class PrviZadatak {
+
+	public static void main(String[] args) {
+		String s1 = new String("110");
+		String s2 = new String("100");
+		System.out.println(calculateXor(s1, s2));
+
+	}
+	public static String calculateXor(String s1, String s2) {
+		String sb = new String();
+		sb = "";
+		int len1 = s1.length(), len2 = s2.length();
+		int rel;
+ 		if (len1 < len2) {
+ 			int i;
+			for (i = 0; i < len1; ++i) {
+				rel = Character.compare(s1.charAt(len1 - 1- i), s2.charAt(len2 - 1 - i));
+				if (rel != 0) sb = "1" + sb; else sb = "0" + sb;
+			}
+			for (; i < len2; ++i) {
+				sb = (s2.charAt(len2 - 1 -i)) +sb;
+			}
+			
+		} else if (len2 < len1) {
+			int i;
+			for (i = 0; i < len2; ++i) {
+				rel = Character.compare(s1.charAt(len1 - 1- i), s2.charAt(len2 - 1 - i));
+				if (rel != 0) sb = "1" + sb; else sb = "0" + sb;
+			}
+			for (; i < len1; ++i) {
+				sb =(s1.charAt(len1 - 1 -i)) + sb;
+			}
+			
+		} else { // ==
+			for (int i = 0; i < len2; ++i) {
+				rel = Character.compare(s1.charAt(i), s2.charAt(i));
+				if (rel != 0) sb = "1" + sb; else sb = "0" + sb;
+			}
+		
+		}
+ 		String s3 = "";
+ 		
+ 		boolean flag = false;
+ 		for (int i = 0; i < sb.length(); ++i) {
+ 			if (!flag) {
+ 				if (sb.charAt(i) == '1') {s3+=sb.charAt(i); flag = true; }
+ 				else continue;
+ 			} else s3+=sb.charAt(i);
+ 		}
+ 		return s3;
+	}
+
+}
