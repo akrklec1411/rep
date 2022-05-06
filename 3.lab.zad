@@ -1,0 +1,19 @@
+class DataDownloader {
+    public static void getData() {
+        String tmp;
+        
+        try (NetworkResource networkResource = new NetworkResource();) {
+            while(networkResource.hasMoreData() == true) {
+                
+                tmp = networkResource.getSomeData(); 
+                System.out.println(tmp);     
+            }
+        } catch (Exception exc) {
+            System.out.println("IZNIMKA");
+
+        } finally {
+        
+            System.out.println("KRAJ");
+        }
+    }
+}
