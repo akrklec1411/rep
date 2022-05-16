@@ -1,0 +1,79 @@
+import java.util.*;
+import java.util.function.Predicate;
+
+class LabTask {
+    public static Map<Integer, Set<String>> underpayed(Map<String, Map<Integer, List<Integer>>> salaries) {
+        
+    	
+    	// mapa godina -> prosjecna placa svih radnika u godini
+    	Map<Integer, Integer> avgAll = new HashMap<>();
+    	
+    	//Mapa radnik -> godina, prosjecna placa radnika
+    	Map<String, Map<Integer, Integer>> idYearAvg = new HashMap<>();
+    	
+    	//Mapa godina : broj radnika koji je primao placu u toj godini
+    	Map<Integer, Integer> yearNumOfWorking = new HashMap<>();
+    	
+    	//iteriramo po radnicima
+    	for (String id : salaries.keySet()) {
+    		Map<Integer, List<Integer>> tmpMap = salaries.get(id);
+    		idYearAvg.put(id, new HashMap<Integer,Integer>());
+    		
+    		//iterimamo po entryijma unutarnje mape
+    		for (Map.Entry<Integer, List<Integer>> entry : tmpMap.entrySet()) {
+    			// entry (key : godina , value : lista placa)
+    			var tmp = avgAll.get(entry.getKey());
+    			if (tmp == null) {
+    				avgAll.put(entry.getKey(), calculateAvg(entry.getValue()));
+    			} else {
+    				avgAll.put(entry.getKey(), calculateAvg(entry.getValue()) + tmp); //podijeliti s salaries.keySet().size()
+    			}
+    			var tmp__ = yearNumOfWorking.get(entry.getKey());
+    			yearNumOfWorking.put(entry.getKey(), tmp__ != null ? tmp__ + 1 : 1);
+    			
+    			//mapa godina :  prosjecna placa ind
+    			var tmpMap_ = idYearAvg.get(id);	
+    			tmpMap_.put(entry.getKey(), calculateAvg(entry.getValue()));
+    		
+    		}
+    	}
+    	//imamo Map( ime , Map (godina : prosjecna placa)) 			--> idYearAvg
+    	//imamo Map (godina : prosjecna placa svih radnika)			--> avgAll
+    		
+    	//napravimo Map (godina : Set(radnici koji imaju za 30% manju prosjecnu placu od prosjecne svih u toj godini))
+    	Map<Integer, Set<String>> underpayedWorkerMap = new HashMap<>();
+    	
+    	
+    	for (String id : idYearAvg.keySet()) {
+    		//individual worker
+    		Map<Integer, Integer> tmpMap = idYearAvg.get(id);
+    		for (Integer i : tmpMap.keySet()) {
+    			if (tmpMap.get(i) < 0.7 * (int)((double) avgAll.get(i) / yearNumOfWorking.get(i)) ) { // dijeljenje potrebno
+    				if (underpayedWorkerMap.get(i) == null) {
+    					Set<String> s = new LinkedHashSet<String>();
+    					s.add(id);
+    					underpayedWorkerMap.put(i, s);
+    					
+    				} else {
+    					underpayedWorkerMap.get(i).add(id);
+    				}
+    			}//dodavanje u return mapu
+    			
+    		}//iteriranje po godinama
+    		
+    	}//iteriranje po radnicima
+    	
+    	return underpayedWorkerMap;
+    	
+    }
+    
+    public static <T extends Number> int calculateAvg(List<T> list) {
+    	double sum = 0;
+    	for (T t : list) {
+    		sum += t.doubleValue();
+    	}
+    	return (int) (sum/list.size());
+    }
+    
+    
+}
