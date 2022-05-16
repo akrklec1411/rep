@@ -1,0 +1,22 @@
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+class FileEditor {
+	 public static void processFile(Path inputFile, Path outputFile) throws IOException {
+		 try (
+		 Writer wr = new BufferedWriter(new FileWriter(outputFile.toFile()))
+		 ) {
+			List<String> allLines = Files.readAllLines(inputFile);
+			 for(String line : allLines) {
+				 wr.write(line + "\n");
+			 }
+		}
+	 }
+//	 public static void main(String[] args) throws IOException {
+//		 Path inputFile = Path.of("exampleWindows.txt");
+//		 Path outputFile = Path.of("exampleLinux.txt");
+//
+//		 FileEditor.processFile(inputFile, outputFile);
+//	 }
+}
