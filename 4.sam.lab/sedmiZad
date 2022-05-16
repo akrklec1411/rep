@@ -1,0 +1,98 @@
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+class LogProcessor {
+	private Path file;
+	private List<LogEntry> listLogEnt = new LinkedList<>() ;
+	
+	public LogProcessor(Path file) {
+		this.file = file;
+	}
+
+	public void load() throws IOException {
+		List<String> lines = Files.readAllLines(file);
+		for(String line : lines) {
+			listLogEnt.add(parseLog(line)) ;
+		}
+		
+	}
+	
+	public static LogEntry parseLog(String line) {
+		String[] list = line.split(" ");
+		
+		String time;
+		String level;
+		String thread;
+		String text;
+		
+		time = list[0] + " " + list[1];
+		
+		int idxfirstPar = line.indexOf("[");
+		
+		StringBuilder sbLevel = new StringBuilder();
+		for (int i = 2; i < idxfirstPar; ++i) {
+			if (Character.isAlphabetic(line.charAt(i)) )
+				sbLevel.append(line.charAt(i));
+		}
+		level = sbLevel.toString().strip();
+		
+		int idx = line.indexOf("---");
+		idxfirstPar = line.indexOf("[", idx);
+		int idxLastPar = line.indexOf("]", idxfirstPar);
+		
+		StringBuilder sbThread = new StringBuilder();
+		for (int i = idxfirstPar+1; i < idxLastPar; ++i) {
+			sbThread.append(line.charAt(i));
+		}
+		thread = sbThread.toString().strip();
+		
+		int idxDoubleDot = line.indexOf(":" ,idxLastPar) + 1;
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i = idxDoubleDot; i < line.length(); ++i) {
+			sb.append(line.charAt(i));
+		}
+		text = sb.toString().stripLeading();
+		return new LogEntry(time, level, thread, text);
+	}
+
+	public List<LogEntry> getLogs() {
+		return listLogEnt;
+	}
+}
+
+class LogEntry {
+	private String time;
+	private String level;
+	private String thread;
+	private String text;
+	
+	public String getTime() {
+		return time;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public String getThread() {
+		return thread;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	
+	
+	public LogEntry(String time, String level, String thread, String text) {
+		super();
+		this.time = time;
+		this.level = level;
+		this.thread = thread;
+		this.text = text;
+	}
+	
+	
+}
