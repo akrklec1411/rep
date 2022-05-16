@@ -1,0 +1,40 @@
+import java.util.*;
+
+class Solution implements StudentScoreStatistics {
+	
+	private Map<String, LinkedList<Integer>> map = new LinkedHashMap<>();
+	
+	@Override
+	public void addStudentScores(String student, Integer... scores) {
+		var tmp = map.get(student);
+		
+		if (tmp == null ) {	
+			tmp = new LinkedList<Integer>();
+			map.put(student, tmp);	
+		}
+			
+		for (Integer i : scores) {
+			tmp.add(i);
+		}
+
+	}
+
+	@Override
+	public Collection<String> getInsertionOrderedStudents() {
+		// TODO Auto-generated method stub
+		return map.keySet();
+	}
+
+	@Override
+	public Collection<Integer> getNaturallySortedPointsForStudent(String student) {
+		var tmp = map.get(student);
+		if (tmp != null) {
+			Collections.sort(tmp); 
+			return tmp;
+		}
+			
+		
+		return 	null;
+	}
+
+}
