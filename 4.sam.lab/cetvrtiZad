@@ -1,0 +1,46 @@
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+
+class JavaProjectFileVisitor extends SimpleFileVisitor<Path> {
+	Set<String> extensionFilter;
+	Map<String, Set<Path>> extensionPathToFileMap = new HashMap<>();
+	
+	public JavaProjectFileVisitor(Set<String> extensionFilter) {
+		this.extensionFilter = extensionFilter;
+	}
+	
+	public Map<String, Set<Path>> getProjectPathsPerExtension() {
+		return extensionPathToFileMap;
+	}
+
+	@Override
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+		String extension = "";
+		LinkedHashSet<Path> s = null;
+		
+		String fileName = file.getFileName().toString();
+		int idxDot = fileName.indexOf(".");
+		
+		if (idxDot != -1) { // nije potrebno 
+			extension = fileName.substring(idxDot);
+		}
+		if (!extensionFilter.contains(extension)) {
+			var tmp = extensionPathToFileMap.get(extension);
+			
+			if (tmp == null) {
+				s = new LinkedHashSet<Path>();
+				extensionPathToFileMap.put(extension, s);
+				s.add(file);
+			} else {
+				tmp.add(file);
+			}
+			
+		}
+		
+		return super.visitFile(file, attrs);
+	}
+	
+	
+}
